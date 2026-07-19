@@ -6,7 +6,7 @@ Spanish day-ahead (OMIE) auction price ingestion, REST API, and Blazor Server fr
 
 ```
 SpotPower.Api             (REST + Quartz)
-SpotPower.Core            (domain models)
+SpotPower.Core            (Models)
 SpotPower.Infrastructure  (EF Core + SQLite, OMIE client)
 SpotPower.Web             (Blazor Server)
 ```
