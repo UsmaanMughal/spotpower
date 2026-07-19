@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="SpotPower.Api/SpotPower.Api.csproj" />
+  <Project Path="SpotPower.Core/SpotPower.Core.csproj" />
+  <Project Path="SpotPower.Infrastructure/SpotPower.Infrastructure.csproj" />
+  <Project Path="SpotPower.Web/SpotPower.Web.csproj" />
+</Solution>

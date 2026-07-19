@@ -1,0 +1,17 @@
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\bin\Debug\net10.0\SpotPower.Infrastructure.deps.json
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\bin\Debug\net10.0\SpotPower.Infrastructure.runtimeconfig.json
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\bin\Debug\net10.0\SpotPower.Infrastructure.dll
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\bin\Debug\net10.0\SpotPower.Infrastructure.pdb
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\bin\Debug\net10.0\SpotPower.Core.dll
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\bin\Debug\net10.0\SpotPower.Core.pdb
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\SpotPower.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\SpotPower.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\SpotPower.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\SpotPower.Infrastructure.AssemblyInfo.cs
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\SpotPower.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\SpotPowe.30B2D2C0.Up2Date
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\SpotPower.Infrastructure.dll
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\refint\SpotPower.Infrastructure.dll
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\SpotPower.Infrastructure.pdb
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\SpotPower.Infrastructure.genruntimeconfig.cache
+C:\Users\usman\OneDrive\Desktop\spotpower\SpotPower.Infrastructure\obj\Debug\net10.0\ref\SpotPower.Infrastructure.dll

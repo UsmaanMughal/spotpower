@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Cgqqmtg5CsA=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\usman\\OneDrive\\Desktop\\spotpower\\SpotPower.Web\\SpotPower.Web.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\usman\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.10\\microsoft.aspnetcore.app.internal.assets.10.0.10.nupkg.sha512"
+  ],
+  "logs": []
+}
