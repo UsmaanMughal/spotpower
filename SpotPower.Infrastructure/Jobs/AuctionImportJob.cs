@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Quartz;
 using SpotPower.Infrastructure.Omie;
 using SpotPower.Infrastructure.Persistence;
+using SpotPower.Infrastructure;
 
 namespace SpotPower.Infrastructure.Jobs;
 
