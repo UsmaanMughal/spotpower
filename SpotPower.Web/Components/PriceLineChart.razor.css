@@ -1,0 +1,55 @@
+.price-chart {
+    background: var(--surface-1);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.price-chart-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.gridline {
+    stroke: var(--gridline);
+    stroke-width: 1;
+}
+
+.baseline {
+    stroke: var(--baseline);
+    stroke-width: 1;
+}
+
+.axis-label {
+    fill: var(--muted);
+    font-size: 11px;
+}
+
+.chart-line {
+    fill: none;
+    stroke: var(--series-1);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.end-marker {
+    fill: var(--series-1);
+    stroke: var(--surface-1);
+    stroke-width: 2;
+}
+
+.end-label {
+    fill: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.hit-target {
+    fill: transparent;
+}
+
+.hit-target:hover {
+    fill: var(--series-1);
+    fill-opacity: 0.15;
+}

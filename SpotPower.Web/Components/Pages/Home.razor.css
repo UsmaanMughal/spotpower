@@ -1,0 +1,26 @@
+.filter-row {
+    display: flex;
+    align-items: end;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--bs-border-color, #dee2e6);
+    margin: 0 0.25rem;
+}
+
+.filter-label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+    color: #52514e;
+    gap: 0.2rem;
+}
+
+.table-scroll {
+    max-height: 480px;
+    overflow-y: auto;
+}

@@ -1,7 +1,114 @@
-﻿@page "/"
+@page "/"
+@rendermode InteractiveServer
+@using SpotPower.Web.Models
+@using SpotPower.Web.Services
+@inject AuctionApiClient ApiClient
+@inject ILogger<Home> Logger
 
-<PageTitle>Home</PageTitle>
+<PageTitle>SpotPower — Day-Ahead Prices</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Spanish day-ahead auction prices</h1>
+<p class="text-secondary">Spot Power Exchange (OMIE) day-ahead results, shown as a CET/CEST time series.</p>
 
-Welcome to your new app.
+<div class="filter-row">
+    <button class="btn btn-outline-secondary btn-sm" @onclick="() => LoadPreset(-1)">Yesterday</button>
+    <button class="btn btn-outline-secondary btn-sm" @onclick="() => LoadPreset(0)">Today</button>
+    <button class="btn btn-outline-secondary btn-sm" @onclick="() => LoadPreset(1)">Tomorrow</button>
+
+    <span class="filter-divider"></span>
+
+    <label class="filter-label">
+        From
+        <input type="date" class="form-control form-control-sm" @bind="fromInput" />
+    </label>
+    <label class="filter-label">
+        To
+        <input type="date" class="form-control form-control-sm" @bind="toInput" />
+    </label>
+    <button class="btn btn-primary btn-sm" @onclick="ApplyCustomRange">Apply</button>
+
+    @if (isLoading)
+    {
+        <span class="text-secondary">Loading…</span>
+    }
+</div>
+
+@if (errorMessage is not null)
+{
+    <div class="alert alert-danger mt-3">@errorMessage</div>
+}
+
+@if (points is not null)
+{
+    <div class="mt-3">
+        <PriceLineChart Points="points" />
+    </div>
+
+    <div class="table-scroll mt-3">
+        <table class="table table-sm table-striped">
+            <thead>
+                <tr>
+                    <th>Time (CET)</th>
+                    <th>Spain (€/MWh)</th>
+                    <th>Portugal (€/MWh)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in points)
+                {
+                    <tr>
+                        <td>@p.TimestampCet.ToString("dd MMM yyyy HH:mm")</td>
+                        <td>@p.PriceEurPerMwhSpain.ToString("0.00")</td>
+                        <td>@p.PriceEurPerMwhPortugal.ToString("0.00")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<AuctionPricePoint>? points;
+    private bool isLoading;
+    private string? errorMessage;
+    private DateOnly? fromInput;
+    private DateOnly? toInput;
+
+    protected override Task OnInitializedAsync() => LoadAsync(from: null, to: null);
+
+    private Task LoadPreset(int dayOffset)
+    {
+        var day = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(dayOffset);
+        return LoadAsync(day, day);
+    }
+
+    private Task ApplyCustomRange() => LoadAsync(fromInput, toInput);
+
+    private async Task LoadAsync(DateOnly? from, DateOnly? to)
+    {
+        isLoading = true;
+        errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            var result = await ApiClient.GetPricesAsync(from, to, CancellationToken.None);
+            points = result;
+
+            if (result.Count > 0)
+            {
+                fromInput = DateOnly.FromDateTime(result[0].TimestampCet.Date);
+                toInput = DateOnly.FromDateTime(result[^1].TimestampCet.Date);
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Logger.LogError(ex, "Failed to reach the SpotPower API");
+            errorMessage = "Could not reach the API. Is SpotPower.Api running?";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

@@ -1,0 +1,141 @@
+@using System.Globalization
+@using System.Net
+@using System.Text
+@using SpotPower.Web.Models
+
+<div class="viz-root price-chart">
+    @if (Points.Count == 0)
+    {
+        <p class="text-secondary">No data for this range.</p>
+    }
+    else
+    {
+        @((MarkupString)BuildSvg())
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public IReadOnlyList<AuctionPricePoint> Points { get; set; } = [];
+
+    private const double Width = 800;
+    private const double Height = 300;
+    private const double PaddingLeft = 48;
+    private const double PaddingRight = 56;
+    private const double PaddingTop = 16;
+    private const double PaddingBottom = 28;
+
+    private string XLabelFormat => SpansMultipleDays() ? "dd MMM" : "HH:mm";
+
+    private bool SpansMultipleDays() =>
+        Points.Count > 0 && Points[0].TimestampCet.Date != Points[^1].TimestampCet.Date;
+
+    // <text> is a reserved Razor keyword and can't carry attributes as literal markup here,
+    // so the whole chart is composed as an SVG string and rendered via MarkupString below.
+    // All interpolated text is our own numeric/date formatting - HTML-encoded anyway as a
+    // defensive habit, not because it's currently attacker-controlled.
+    private string BuildSvg()
+    {
+        var sb = new StringBuilder();
+        var label = $"Spain day-ahead price, {Points[0].TimestampCet:dd MMM HH:mm} to {Points[^1].TimestampCet:dd MMM HH:mm}";
+
+        sb.Append(CultureInfo.InvariantCulture, $"""<svg viewBox="0 0 {F(Width)} {F(Height)}" preserveAspectRatio="none" class="price-chart-svg" role="img" aria-label="{Enc(label)}">""");
+
+        foreach (var tick in GridlineTicks())
+        {
+            sb.Append(CultureInfo.InvariantCulture, $"""<line class="gridline" x1="{F(PaddingLeft)}" y1="{F(Y(tick))}" x2="{F(Width - PaddingRight)}" y2="{F(Y(tick))}" />""");
+            sb.Append(CultureInfo.InvariantCulture, $"""<text class="axis-label" x="{F(PaddingLeft - 8)}" y="{F(Y(tick) + 4)}" text-anchor="end">{Enc(tick.ToString("0", CultureInfo.InvariantCulture))}</text>""");
+        }
+
+        sb.Append(CultureInfo.InvariantCulture, $"""<line class="baseline" x1="{F(PaddingLeft)}" y1="{F(Height - PaddingBottom)}" x2="{F(Width - PaddingRight)}" y2="{F(Height - PaddingBottom)}" />""");
+
+        foreach (var i in XAxisLabelIndices())
+        {
+            sb.Append(CultureInfo.InvariantCulture, $"""<text class="axis-label" x="{F(X(i))}" y="{F(Height - PaddingBottom + 18)}" text-anchor="middle">{Enc(Points[i].TimestampCet.ToString(XLabelFormat))}</text>""");
+        }
+
+        sb.Append(CultureInfo.InvariantCulture, $"""<polyline class="chart-line" points="{LinePoints()}" />""");
+
+        for (var i = 0; i < Points.Count; i++)
+        {
+            var p = Points[i];
+            var tooltip = $"{p.TimestampCet:dd MMM HH:mm} CET — €{p.PriceEurPerMwhSpain:0.00}/MWh";
+            sb.Append(CultureInfo.InvariantCulture, $"""<circle class="hit-target" cx="{F(X(i))}" cy="{F(Y(p.PriceEurPerMwhSpain))}" r="12"><title>{Enc(tooltip)}</title></circle>""");
+        }
+
+        var lastIndex = Points.Count - 1;
+        var lastPrice = Points[^1].PriceEurPerMwhSpain;
+        sb.Append(CultureInfo.InvariantCulture, $"""<circle class="end-marker" cx="{F(X(lastIndex))}" cy="{F(Y(lastPrice))}" r="4" />""");
+        sb.Append(CultureInfo.InvariantCulture, $"""<text class="end-label" x="{F(X(lastIndex) + 8)}" y="{F(Y(lastPrice) + 4)}">{Enc($"€{lastPrice:0.00}")}</text>""");
+
+        sb.Append("</svg>");
+        return sb.ToString();
+    }
+
+    private static string F(double value) => value.ToString(CultureInfo.InvariantCulture);
+
+    private static string Enc(string value) => WebUtility.HtmlEncode(value);
+
+    private double X(int index) =>
+        Points.Count <= 1
+            ? PaddingLeft + (Width - PaddingLeft - PaddingRight) / 2
+            : PaddingLeft + (Width - PaddingLeft - PaddingRight) * index / (Points.Count - 1);
+
+    private (decimal Min, decimal Max) PriceBounds()
+    {
+        var min = Points.Min(p => p.PriceEurPerMwhSpain);
+        var max = Points.Max(p => p.PriceEurPerMwhSpain);
+        var pad = max == min ? 5m : (max - min) * 0.1m;
+        return (min - pad, max + pad);
+    }
+
+    private double Y(decimal price)
+    {
+        var (min, max) = PriceBounds();
+        var innerHeight = Height - PaddingTop - PaddingBottom;
+        var ratio = max == min ? 0.5 : (double)((price - min) / (max - min));
+        return PaddingTop + innerHeight * (1 - ratio);
+    }
+
+    private string LinePoints() =>
+        string.Join(' ', Points.Select((p, i) => $"{F(X(i))},{F(Y(p.PriceEurPerMwhSpain))}"));
+
+    private IEnumerable<int> XAxisLabelIndices()
+    {
+        if (Points.Count == 0) yield break;
+        var step = Math.Max(1, Points.Count / 6);
+        for (var i = 0; i < Points.Count; i += step)
+        {
+            yield return i;
+        }
+    }
+
+    private IEnumerable<decimal> GridlineTicks()
+    {
+        var (min, max) = PriceBounds();
+        var step = NiceStep((max - min) / 4);
+        if (step <= 0) yield break;
+
+        var tick = Math.Ceiling(min / step) * step;
+        while (tick <= max)
+        {
+            yield return tick;
+            tick += step;
+        }
+    }
+
+    private static decimal NiceStep(decimal roughStep)
+    {
+        if (roughStep <= 0) return 1;
+        var magnitude = (decimal)Math.Pow(10, Math.Floor(Math.Log10((double)roughStep)));
+        var residual = roughStep / magnitude;
+        var niceResidual = residual switch
+        {
+            <= 1 => 1m,
+            <= 2 => 2m,
+            <= 5 => 5m,
+            _ => 10m,
+        };
+        return niceResidual * magnitude;
+    }
+}
