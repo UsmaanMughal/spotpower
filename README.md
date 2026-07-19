@@ -5,10 +5,10 @@ Spanish day-ahead (OMIE) auction price ingestion, REST API, and Blazor Server fr
 ## Project structure
 
 ```
-SpotPower.Api             (REST API + Quartz-hosted ingestion — the long-running app)
-SpotPower.Core            (domain entities, no framework dependencies)
-SpotPower.Infrastructure  (EF Core + SQLite, OMIE client/parser, Quartz job, SpainClock)
-SpotPower.Web             (Blazor Server frontend — consumes the REST API only)
+SpotPower.Api             (REST + Quartz)
+SpotPower.Core            (domain models)
+SpotPower.Infrastructure  (EF Core + SQLite, OMIE client)
+SpotPower.Web             (Blazor Server)
 ```
 
 - **SpotPower.Api** — ASP.NET Core minimal API host and composition root. Runs the Quartz
