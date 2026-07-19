@@ -16,12 +16,10 @@ namespace SpotPower.Infrastructure.Omie;
 /// </summary>
 public static class OmieMarginalPriceParser
 {
-    public static readonly TimeZoneInfo SpainTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Madrid");
-
     public static List<AuctionPrice> Parse(string rawFileContent, DateOnly deliveryDate)
     {
         var localMidnight = DateTime.SpecifyKind(deliveryDate.ToDateTime(TimeOnly.MinValue), DateTimeKind.Unspecified);
-        var dayStartUtc = TimeZoneInfo.ConvertTimeToUtc(localMidnight, SpainTimeZone);
+        var dayStartUtc = TimeZoneInfo.ConvertTimeToUtc(localMidnight, SpainClock.TimeZone);
 
         var results = new List<AuctionPrice>();
 

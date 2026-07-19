@@ -25,8 +25,7 @@ public class AuctionImportJob(
     public async Task Execute(IJobExecutionContext context)
     {
         var ct = context.CancellationToken;
-        var nowInSpain = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, OmieMarginalPriceParser.SpainTimeZone);
-        var today = DateOnly.FromDateTime(nowInSpain);
+        var today = SpainClock.Today();
 
         for (var date = today.AddDays(-_options.BackfillDays); date <= today.AddDays(1); date = date.AddDays(1))
         {
